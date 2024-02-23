@@ -1,47 +1,53 @@
-# Spring_Boot_Kotlin
+# Avengers API - LiveCode DIO - 01/04/2021
 
-API dos Vingadores - LiveCode DIO - 01/04/2021
 Desenvolvimento de uma API utilizando SpringBoot + Kotlin com o intuito de cadastro de Vingadores.
 
-Tecnologias / Frameworks / IDE
-Intelij
-SpringBoot2.4.4
-Maven
-Kotlin
-SpringData JPA
-PostgreSQL
-Rota de voo
-Java 8
-Heroku
-Criação do esqueleto do projeto
-https://start.spring.io/
-API do contrato
-https://editor.swagger.io/
+## Tecnologias / Frameworks / IDE
 
-Recursoavenger
+- Intellij
+- SpringBoot 2.4.4
+- Maven
+- Kotlin
+- SpringData JPA
+- PostgreSQL
+- Flyway
+- Java 8
+- Heroku
 
-OBTER - 200 OK
+## Criação do esqueleto do projeto
 
-GET {id}/detail - 200 OK ou 404 Não encontrado
+- https://start.spring.io/
 
-POST - 201 Criado ou 400 Bad Request
+## Definir contrato API
 
-PUT {id} - 202 Aceito ou 404 Não Encontrado
+- https://editor.swagger.io/
 
-DELETE {id} - 202 Aceito ou 404 Não Encontrado
+- Recurso `avenger`
+- GET - 200 OK
+- GET {id}/detail - 200 OK ou 404 Not Found
+- POST - 201 Created ou 400 Bad Request
+- PUT {id} - 202 Accepted ou 404 Not Found
+- DELETE {id} - 202 Accepted ou 404 Not Found
 
+```json
 {
   "nick": "spider-man",
   "person": "Peter Parker",
   "description": "sobre poderes",
   "history": "a história"
 }
-Design Arquitetônico
-Camada de Aplicação (controladores, configurações, handle de exceção, dtos de request e resposta, validações de bean)
-Camada de Domínio (modelo avenger, interface repositório, serviço)
-Camada de Infraestrutura (repositório jpa, entidade avenger, proxy implementa repositório de interface e utiliza o repositório jpa para comunicação com banco de dados)
-Testes
-Flyway (banco de dados/migração)
+```
+
+## Design Arquitetural
+
+- Camada de Aplicação (controllers, configs, exception handle, request e response dtos, bean validations)
+- Camada de Domínio (modelo avenger, interface repositório, serviço)
+- Camada de Infraestrutura (jpa repository, entidade avenger, proxy implementa interface repositorio e utiliza o jpa repositorio para comunicação com banco de dados)
+- Testes 
+
+### Flyway (db/migration)
+
+```sql
 create table avenger (
     id bigserial not null,
     nick varchar(36),
@@ -52,10 +58,15 @@ create table avenger (
 );
 
 alter table avenger add constraint UK_5r88eemotwgru6k0ilqb2ledh unique (nick);
-Perfis
-aplicativo.yaml
-aplicativo-dev.yaml
-aplicativo-heroku.yaml
+```
+
+### Profiles
+
+- application.yaml
+- application-dev.yaml
+- application-heroku.yaml
+
+```yaml
 spring:
   application:
     name: avengers
@@ -114,6 +125,9 @@ server:
       cookie:
         http-only: true
     context-path: /avengers
+```
+
+```yaml
 spring:
   profiles:
     active: dev
@@ -128,6 +142,9 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
+```
+
+```yaml
 spring:
   profiles:
     active: heroku
@@ -142,12 +159,21 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     show-sql: false
-Dcoker
-Configuração do ambiente
+```
+
+## Dcoker 
+
+### Environment Config
+
+```sh 
 DB_USER=dio.avenger
 DB_PASSWORD=dio.avenger
 DB_NAME=avengers
-YAML (backend-services.yaml)
+```
+
+### YAML (backend-services.yaml)
+
+```yaml
 version: '3.2'
 services:
   postgres:
@@ -181,53 +207,25 @@ volumes:
 networks:
   postgres-compose-network:
     driver: bridge
-Script / Comandos
-docker-compose -f backend-services.yaml up -d(implantar) / docker-compose -f backend-services.yaml down(desimplantar)
+```
 
-Iniciar API
+### Script / Comandos
 
+- `docker-compose -f backend-services.yaml up -d` (deploy) / `docker-compose -f backend-services.yaml down` (undeploy) 
+
+- Start API 
+```sh
 ./mvnw spring-boot:run -Dspring-boot.run.profiles=dev -Dspring-boot.run.jvmArguments="-Xmx256m -Xms128m" -Dspring-boot.run.arguments="'--DB_USER=dio.avenger' '--DB_PASSWORD=dio.avenger' '--DB_NAME=avengers'"
-Heroku
-Criar aplicativo
-Linkar com Github
-Definir variáveis ​​de ambiente
-Perfil
-web: java -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap $JAVA_OPTS -Dserver.port=$PORT -Dspring.profiles.active=heroku -jar target/*.jar
-Sobre
-dio-avengers-api
+``` 
 
-Recursos
- Leia-me
- Atividade
- Propriedades personalizadas
-Estrelas
- 16 estrelas
-Observadores
- 3 assistindo
-Garfos
- 6 garfos
-Repositório de relatórios
-Lançamentos
-Nenhum lançamento publicado
-Pacotes
-Nenhum pacote publicado
-Implantações
-1
- dio-avengers-api inativo
-línguas
-Kotlin
-94,9%
- 
-Concha
-5,1%
-Rodapé
-© 2024 GitHub, Inc.
-Navegação no rodapé
-Termos
-Privacidade
-Segurança
-Status
-Documentos
-Contato
-Gerenciar cookies
-Não compartilhe minhas informações pessoais
+## Heroku
+
+- Criar app
+- Linkar com Github
+- Setar vairáveis de ambiente
+
+### Procfile
+
+```text
+web: java -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap $JAVA_OPTS -Dserver.port=$PORT -Dspring.profiles.active=heroku -jar target/*.jar
+```
